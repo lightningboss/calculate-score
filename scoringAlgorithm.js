@@ -1,39 +1,76 @@
-function getRanking(users, games, submissions) {
-    const userPoints = new Map();
-    games.forEach((game) => {
-        const gameSubmissions = filterSubmissionsForGame(game.id, submissions);
-        const deviations = gameSubmissions.map(submission => getDeviation(game.answer, submission.guess));
-        const pointsToRanking = mapAbsolutePointsToRanking(deviations);
+export function getRanking(users, games, submissions) {
+    const userPoints = games.map((game) => {
+        return getPointsForUsers(users, game, submissions);
+    });
 
-        users.forEach((user) => {
-            const userGuess = gameSubmissions.filter(submission => submission.userId === user.userId)[0];
-            if (userGuess) {
-                const pointsForGuess = pointsToRanking.get(userGuess.guess);
-                userPoints.has(user.userId)
-                ? userPoints.set(user.userId, userPoints.get(user.userId) + pointsForGuess)
-                : userPoints.set(user.userId, pointsForGuess);
+    const summedUserPoints = sumUserPoints(userPoints);
+    const listOfPoints = [];
+    summedUserPoints.forEach(userPoints => listOfPoints.push(userPoints));
+    const ranks = mapAbsolutePointsToRanking(listOfPoints);
 
-                console.log(userGuess, user, game);
-            } else {
-                userPoints.has(user.userId)
-                ? userPoints.set(user.userId, userPoints.get(user.userId) + pointsToRanking.get('HIGHEST'))
-                : userPoints.set(user.userId, pointsToRanking.get('HIGHEST'));
-            }
-        });
-    })
+    return users.map(user => {
+        const userId = user.userId;
+        const points = summedUserPoints.get(user.userId);
+        const rank = ranks.get(points);
+
+        return {
+            userId,
+            points,
+            rank,
+        }
+    });
+}
+
+export function addItemToMap(key, value, map) {
+    map.has(key)
+    ? map.set(key, map.get(key) + value)
+    : map.set(key, value);
+}
+
+export function sumUserPoints(userPoints) {
+    const summedUserPoints = new Map();
+    userPoints.map((x) => {
+        x.forEach((value, key) => addItemToMap(key, value, summedUserPoints));
+    });
+
+    return summedUserPoints;
+}
+
+export function getPointsForUsers(users, game, submissions) {
+    const userPoints = new Map(users.map(user => [user.userId, 0]));
+    const gameSubmissions = filterSubmissionsForGame(game.id, submissions);
+    const pointsToRanking = mapSubmissionsToPoints(gameSubmissions, game);
+    users.forEach((user) => {
+        const userGuess = gameSubmissions.filter(submission => submission.userId === user.userId)[0];
+        if (userGuess) {
+            const userDeviation = getDeviation(userGuess.guess, game.answer);
+            const pointsForGuess = pointsToRanking.get(userDeviation);
+            addItemToMap(user.userId, pointsForGuess, userPoints);
+        } else {
+            addItemToMap(user.userId, pointsToRanking.get('HIGHEST'), userPoints);
+        }
+    });
 
     return userPoints;
 }
 
-function filterSubmissionsForGame(gameId, submissions) {
+export function mapSubmissionsToPoints(submissions, game) {
+    const deviations = submissions.map(submission => getDeviation(game.answer, submission.guess));
+    return mapAbsolutePointsToRanking(deviations);
+}
+// forEach game
+//  get userPoints
+// sum them
+// get rankForPoints
+export function filterSubmissionsForGame(gameId, submissions) {
     return submissions.filter(submission => submission.gameId === gameId);
 }
 
-function getDeviation(n, m) {
+export function getDeviation(n, m) {
     return Math.abs(n - m);
 }
 
-function mapAbsolutePointsToRanking(absolutePoints) {
+export function mapAbsolutePointsToRanking(absolutePoints) {
     // Turns array  [10, 11, 11, 12, 13, 13, 13, 14]
     // into  map    { 10: 1, 11: 2, 12: 4, 13: 5, 14: 8 }
     const points = absolutePoints.sort((a , b) => a - b);
@@ -51,7 +88,7 @@ function mapAbsolutePointsToRanking(absolutePoints) {
     return ranking;
 }
 
-function getNumberOfOccurencies(elements) {
+export function getNumberOfOccurencies(elements) {
     const uniqueValues = [...new Set(elements)];
     return new Map(uniqueValues.map(val => {
         const occurencies = elements.filter(element => element === val).length;
@@ -59,7 +96,7 @@ function getNumberOfOccurencies(elements) {
     }));
 }
 
-function getNumberOfOccurencies2(elements) {
+export function getNumberOfOccurencies2(elements) {
     const numberOfOccurences = new Map();
     elements.forEach(element => {
         numberOfOccurences.has(element)
