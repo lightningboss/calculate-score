@@ -1,0 +1,19 @@
+{
+    "author": "Marc Nitzsche",
+    "name": "calculate-ranks",
+    "version": "0.0.1",
+    "description": "Calculates corresponding ranks for set of guesses",
+    "main": "scoringAlgorithm.js",
+    "scripts": {
+        "test": "jest",
+        "test:watch": "jest --watch"
+    },
+    "dependencies": {},
+    "devDependencies": {
+        "babel-jest": "^20.0.3",
+        "babel-preset-es2015": "^6.24.1",
+        "jest": "^20.0.4",
+        "regenerator-runtime": "^0.10.5"
+    },
+    "license": "MIT"
+}
