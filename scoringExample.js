@@ -1,4 +1,4 @@
-const sampleUsers = [
+export const sampleUsers = [
     {
         userId: 101,
         firstName: 'Jonas',
@@ -21,7 +21,7 @@ const sampleUsers = [
     },
 ];
 
-const sampleGames = [
+export const sampleGames = [
     {
         id: 1,
         question: 'How many things are there in the universe?',
@@ -39,7 +39,7 @@ const sampleGames = [
     },
 ];
 
-const sampleSubmissions = [
+export const sampleSubmissions = [
     // Game 1
     {
         id: 1,
@@ -117,25 +117,25 @@ const sampleSubmissions = [
     },
 ];
 
-const sampleResult = [
+export const sampleResult = [
     {
         userId: 101,
         rank: 1,
-        points: 3,
-    },
-    {
-        userId: 104,
-        rank: 1,
-        points: 3,
+        points: 6,
     },
     {
         userId: 102,
         rank: 3,
-        points: 4,
+        points: 7,
     },
     {
         userId: 103,
         rank: 4,
-        points: 5,
+        points: 8,
+    },
+    {
+        userId: 104,
+        rank: 1,
+        points: 6,
     },
 ];
