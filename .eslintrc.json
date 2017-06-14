@@ -2,5 +2,13 @@
     "extends": "airbnb-base",
     "plugins": [
         "import"
-    ]
+    ],
+    "env": {
+        "node": true,
+        "es6": true,
+        "jest": true
+    },
+    "rules": {
+      "no-use-before-define": ["off", { "functions": false }]
+    }
 }
