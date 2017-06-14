@@ -1,4 +1,10 @@
-import { rankUsers, getRankingForAbsolutePoints, getPointsForSubmissions } from './scoringAlgorithm';
+import {
+  rankUsers,
+  getRankingForAbsolutePoints,
+  getPointsForSubmissions,
+  getPointsForUsers,
+  sumUserPoints,
+} from './scoringAlgorithm';
 import { sampleUsers, sampleGames, sampleSubmissions, sampleResult } from './scoringExample';
 
 describe('rankUsers(users, games, submissions)', () => {
@@ -77,5 +83,63 @@ describe('getPointsForSubmissions(submissions, game)', () => {
   it('throws if game answer is not defined', () => {
     const submissions = [{ guess: 100 }];
     expect(() => { getPointsForSubmissions(submissions); }).toThrow();
+  });
+});
+
+describe('sumUserPoints(userPoints)', () => {
+  it('correctly sums points in array', () => {
+    const unorderedMaps = [
+      new Map([
+        [110, 10],
+        [120, 20],
+        [130, 30],
+      ]),
+      new Map([
+        [110, 100],
+        [120, 100],
+        [130, 100],
+      ]),
+    ];
+    const correctResult = new Map([
+      [110, 110],
+      [120, 120],
+      [130, 130],
+    ]);
+    const result = sumUserPoints(unorderedMaps);
+    expect(result.size).toEqual(correctResult.size);
+    result.forEach((value, key) => {
+      expect(value).toEqual(correctResult.get(key));
+    });
+  });
+
+  it('correctly sums points if one map does not have all submissions', () => {
+    const unorderedMaps = [
+      new Map([
+        [110, 10],
+        [120, 20],
+      ]),
+      new Map([
+        [110, 100],
+        [120, 100],
+        [130, 100],
+      ]),
+    ];
+    const correctResult = new Map([
+      [110, 110],
+      [120, 120],
+      [130, 100],
+    ]);
+    const result = sumUserPoints(unorderedMaps);
+    expect(result.size).toEqual(correctResult.size);
+    result.forEach((value, key) => {
+      expect(value).toEqual(correctResult.get(key));
+    });
+  });
+
+  it('correctly handles an empty array', () => {
+    const empty = [];
+    const result = sumUserPoints(empty);
+
+    expect(result.size).toEqual(0);
   });
 });
