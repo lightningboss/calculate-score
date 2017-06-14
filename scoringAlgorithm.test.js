@@ -5,11 +5,59 @@ import {
   getPointsForUsers,
   sumUserPoints,
 } from './scoringAlgorithm';
-import { sampleUsers, sampleGames, sampleSubmissions, sampleResult } from './scoringExample';
+import {
+  sampleUsers,
+  sampleGames,
+  sampleSubmissions,
+  sampleResult,
+  sampleSubmissionsWithSubmissionsMissing,
+  sampleResultWithSubmissionsMissing,
+  sampleResultWithEmptySubmissions,
+} from './scoringExample';
 
 describe('rankUsers(users, games, submissions)', () => {
   it('works as expexted for normal dataset [blackbox]', () => {
     expect(rankUsers(sampleUsers, sampleGames, sampleSubmissions)).toEqual(sampleResult);
+  });
+
+  it('works as expected if some users did not submit', () => {
+    expect(
+      rankUsers(sampleUsers, sampleGames, sampleSubmissionsWithSubmissionsMissing),
+    ).toEqual(sampleResultWithSubmissionsMissing);
+  });
+
+  it('can handle empty user and submissions array', () => {
+    expect(rankUsers([], sampleGames, [])).toEqual([]);
+  });
+
+  it('can handle empty submissions array', () => {
+    expect(rankUsers(sampleUsers, sampleGames, [])).toEqual(sampleResultWithEmptySubmissions);
+  });
+});
+
+describe('getPointsForUsers(users, game, submissions', () => {
+  it('correctly gets the points for a game for all users', () => {
+    const game = sampleGames[2];
+    const correctResult = new Map([
+      [101, 1],
+      [102, 3],
+      [103, 4],
+      [104, 1],
+    ]);
+    const result = getPointsForUsers(sampleUsers, game, sampleSubmissions);
+    expect(result).toEqual(correctResult);
+  });
+
+  it('handles case that user did not submit anything', () => {
+    const game = sampleGames[0];
+    const correctResult = new Map([
+      [101, 3],
+      [102, 2],
+      [103, 1],
+      [104, 4],
+    ]);
+    const result = getPointsForUsers(sampleUsers, game, sampleSubmissionsWithSubmissionsMissing);
+    expect(result).toEqual(correctResult);
   });
 });
 
@@ -25,9 +73,7 @@ describe('getRankingForAbsolutePoints(absolutePoints)', () => {
       ['HIGHEST', 9],
     ]);
     const result = getRankingForAbsolutePoints(absolutePoints);
-    result.forEach((value, key) => {
-      expect(value).toEqual(correctResult.get(key));
-    });
+    expect(result).toEqual(correctResult);
   });
 
   it('handles an empty array', () => {
@@ -67,9 +113,7 @@ describe('getPointsForSubmissions(submissions, game)', () => {
     ]);
 
     const result = getPointsForSubmissions(submissions, game);
-    result.forEach((value, key) => {
-      expect(value).toEqual(correctResult.get(key));
-    });
+    expect(result).toEqual(correctResult);
   });
 
   it('handles empty submissions', () => {
@@ -107,9 +151,7 @@ describe('sumUserPoints(userPoints)', () => {
     ]);
     const result = sumUserPoints(unorderedMaps);
     expect(result.size).toEqual(correctResult.size);
-    result.forEach((value, key) => {
-      expect(value).toEqual(correctResult.get(key));
-    });
+    expect(result).toEqual(correctResult);
   });
 
   it('correctly sums points if one map does not have all submissions', () => {
@@ -131,9 +173,7 @@ describe('sumUserPoints(userPoints)', () => {
     ]);
     const result = sumUserPoints(unorderedMaps);
     expect(result.size).toEqual(correctResult.size);
-    result.forEach((value, key) => {
-      expect(value).toEqual(correctResult.get(key));
-    });
+    expect(result).toEqual(correctResult);
   });
 
   it('correctly handles an empty array', () => {
