@@ -13,7 +13,7 @@ import {
   sampleSubmissionsWithSubmissionsMissing,
   sampleResultWithSubmissionsMissing,
   sampleResultWithEmptySubmissions,
-} from './scoringExample';
+} from './scoringAlgorithm.fixtures';
 
 describe('rankUsers(users, games, submissions)', () => {
   it('works as expexted for normal dataset [blackbox]', () => {
