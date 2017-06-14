@@ -1,23 +1,20 @@
 export function getRanking(users, games, submissions) {
-    const userPoints = games.map((game) => {
+    const unorderedUserPoints = games.map((game) => {
         return getPointsForUsers(users, game, submissions);
     });
 
-    const summedUserPoints = sumUserPoints(userPoints);
+    const summedUserPoints = sumUserPoints(unorderedUserPoints);
     const listOfPoints = [];
-    summedUserPoints.forEach(userPoints => listOfPoints.push(userPoints));
+
+    // Add only points to array, no user information
+    summedUserPoints.forEach(unorderedUserPoints => listOfPoints.push(unorderedUserPoints));
     const ranks = mapAbsolutePointsToRanking(listOfPoints);
 
     return users.map(user => {
         const userId = user.userId;
         const points = summedUserPoints.get(user.userId);
         const rank = ranks.get(points);
-
-        return {
-            userId,
-            points,
-            rank,
-        }
+        return { userId, points, rank };
     });
 }
 
@@ -29,7 +26,7 @@ export function addItemToMap(key, value, map) {
 
 export function sumUserPoints(userPoints) {
     const summedUserPoints = new Map();
-    userPoints.map((x) => {
+    userPoints.forEach(x => {
         x.forEach((value, key) => addItemToMap(key, value, summedUserPoints));
     });
 
@@ -37,7 +34,7 @@ export function sumUserPoints(userPoints) {
 }
 
 export function getPointsForUsers(users, game, submissions) {
-    const userPoints = new Map(users.map(user => [user.userId, 0]));
+    const userPoints = new Map();
     const gameSubmissions = filterSubmissionsForGame(game.id, submissions);
     const pointsToRanking = mapSubmissionsToPoints(gameSubmissions, game);
     users.forEach((user) => {
@@ -58,10 +55,7 @@ export function mapSubmissionsToPoints(submissions, game) {
     const deviations = submissions.map(submission => getDeviation(game.answer, submission.guess));
     return mapAbsolutePointsToRanking(deviations);
 }
-// forEach game
-//  get userPoints
-// sum them
-// get rankForPoints
+
 export function filterSubmissionsForGame(gameId, submissions) {
     return submissions.filter(submission => submission.gameId === gameId);
 }
@@ -99,9 +93,8 @@ export function getNumberOfOccurencies(elements) {
 export function getNumberOfOccurencies2(elements) {
     const numberOfOccurences = new Map();
     elements.forEach(element => {
-        numberOfOccurences.has(element)
-        ? numberOfOccurences.set(element, numberOfOccurences.get(element) + 1)
-        : numberOfOccurences.set(element, 1);
+        const NEW_OCCURENCY = 1;
+        addItemToMap(element, NEW_OCCURENCY, numberOfOccurences);
     });
 
     return numberOfOccurences;
