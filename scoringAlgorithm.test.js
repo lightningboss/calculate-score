@@ -1,8 +1,8 @@
-import { getRanking } from './scoringAlgorithm';
+import { rankUsers } from './scoringAlgorithm';
 import { sampleUsers, sampleGames, sampleSubmissions, sampleResult } from './scoringExample';
 
-describe('getRanking(users, games, submissions)', () => {
-  it('works as expexted [blackbox]', () => {
-    expect(getRanking(sampleUsers, sampleGames, sampleSubmissions)).toEqual(sampleResult);
+describe('rankUsers(users, games, submissions)', () => {
+  it('works as expexted for normal dataset [blackbox]', () => {
+    expect(rankUsers(sampleUsers, sampleGames, sampleSubmissions)).toEqual(sampleResult);
   });
 });
