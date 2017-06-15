@@ -1,9 +1,9 @@
 import {
   rankUsers,
   getRankingForAbsolutePoints,
-  getPointsForSubmissions,
-  getPointsForUsers,
-  sumUserPoints,
+  getAbsolutePointsForSubmissions,
+  getAbsoluteUserPointsForGame,
+  sumPoints,
 } from './scoringAlgorithm';
 import {
   sampleUsers,
@@ -35,7 +35,7 @@ describe('rankUsers(users, games, submissions)', () => {
   });
 });
 
-describe('getPointsForUsers(users, game, submissions', () => {
+describe('getAbsoluteUserPointsForGame(users, game, submissions', () => {
   it('correctly gets the points for a game for all users', () => {
     const game = sampleGames[2];
     const correctResult = new Map([
@@ -44,7 +44,7 @@ describe('getPointsForUsers(users, game, submissions', () => {
       [103, 4],
       [104, 1],
     ]);
-    const result = getPointsForUsers(sampleUsers, game, sampleSubmissions);
+    const result = getAbsoluteUserPointsForGame(sampleUsers, game, sampleSubmissions);
     expect(result).toEqual(correctResult);
   });
 
@@ -56,7 +56,11 @@ describe('getPointsForUsers(users, game, submissions', () => {
       [103, 1],
       [104, 4],
     ]);
-    const result = getPointsForUsers(sampleUsers, game, sampleSubmissionsWithSubmissionsMissing);
+    const result = getAbsoluteUserPointsForGame(
+      sampleUsers,
+      game,
+      sampleSubmissionsWithSubmissionsMissing,
+    );
     expect(result).toEqual(correctResult);
   });
 });
@@ -93,7 +97,7 @@ describe('getRankingForAbsolutePoints(absolutePoints)', () => {
   });
 });
 
-describe('getPointsForSubmissions(submissions, game)', () => {
+describe('getAbsolutePointsForSubmissions(submissions, game)', () => {
   it('returns the points for a set of submissions', () => {
     const game = { answer: 200 };
     const submissions = [
@@ -112,25 +116,25 @@ describe('getPointsForSubmissions(submissions, game)', () => {
       ['HIGHEST', 7],
     ]);
 
-    const result = getPointsForSubmissions(submissions, game);
+    const result = getAbsolutePointsForSubmissions(submissions, game);
     expect(result).toEqual(correctResult);
   });
 
   it('handles empty submissions', () => {
     const game = { answer: 200 };
     const submissions = [];
-    const result = getPointsForSubmissions(submissions, game);
+    const result = getAbsolutePointsForSubmissions(submissions, game);
 
     expect(result.get('HIGHEST')).toEqual(1);
   });
 
   it('throws if game answer is not defined', () => {
     const submissions = [{ guess: 100 }];
-    expect(() => { getPointsForSubmissions(submissions); }).toThrow();
+    expect(() => { getAbsolutePointsForSubmissions(submissions); }).toThrow();
   });
 });
 
-describe('sumUserPoints(userPoints)', () => {
+describe('sumPoints(userPoints)', () => {
   it('correctly sums points in array', () => {
     const unorderedMaps = [
       new Map([
@@ -149,7 +153,7 @@ describe('sumUserPoints(userPoints)', () => {
       [120, 120],
       [130, 130],
     ]);
-    const result = sumUserPoints(unorderedMaps);
+    const result = sumPoints(unorderedMaps);
     expect(result.size).toEqual(correctResult.size);
     expect(result).toEqual(correctResult);
   });
@@ -171,14 +175,14 @@ describe('sumUserPoints(userPoints)', () => {
       [120, 120],
       [130, 100],
     ]);
-    const result = sumUserPoints(unorderedMaps);
+    const result = sumPoints(unorderedMaps);
     expect(result.size).toEqual(correctResult.size);
     expect(result).toEqual(correctResult);
   });
 
   it('correctly handles an empty array', () => {
     const empty = [];
-    const result = sumUserPoints(empty);
+    const result = sumPoints(empty);
 
     expect(result.size).toEqual(0);
   });
