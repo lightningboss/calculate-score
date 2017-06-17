@@ -3,7 +3,7 @@
   "name": "calculate-ranks",
   "version": "0.0.1",
   "description": "Calculates corresponding ranks for set of guesses",
-  "main": "scoringAlgorithm.js",
+  "main": "./src/scoringAlgorithm.js",
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch"
